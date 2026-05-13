@@ -36,7 +36,7 @@ jobs:
 
     - name: Install linting tools
       run: |
-        npm install -g htmlhint eslint
+        npm install -g htmlhint eslint globals
 
     - name: Lint HTML files
       run: |
@@ -46,7 +46,7 @@ jobs:
     - name: Lint JavaScript files
       run: |
         cd Student-portal-app/frontend/js
-        eslint --config ../.eslintrc.js *.js
+        eslint *.js
 
   build-docker:
     runs-on: ubuntu-latest
