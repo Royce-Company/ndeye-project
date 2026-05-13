@@ -61,12 +61,12 @@ jobs:
     - name: Build Docker images
       run: |
         cd Student-portal-app
-        docker-compose build
+        docker compose build
 
     - name: Run Docker Compose
       run: |
         cd Student-portal-app
-        docker-compose up -d
+        docker compose up -d
         sleep 10
 
     - name: Test frontend URL
