@@ -36,7 +36,10 @@ jobs:
 
     - name: Install linting tools
       run: |
-        npm install -g htmlhint eslint globals
+        npm install -g htmlhint eslint
+        cd Student-portal-app/frontend
+        npm init -y
+        npm install globals
 
     - name: Lint HTML files
       run: |
