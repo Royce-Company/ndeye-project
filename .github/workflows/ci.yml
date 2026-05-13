@@ -46,7 +46,7 @@ jobs:
     - name: Lint JavaScript files
       run: |
         cd Student-portal-app/frontend/js
-        eslint *.js
+        eslint --config ../.eslintrc.js *.js
 
   build-docker:
     runs-on: ubuntu-latest
