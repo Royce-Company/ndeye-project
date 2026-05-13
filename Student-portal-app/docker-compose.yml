@@ -1,0 +1,60 @@
+version: '3.8'
+
+services:
+  # MySQL Database
+  mysql:
+    image: mysql:8.0
+    container_name: student-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: student_portal
+      MYSQL_USER: myuser
+      MYSQL_PASSWORD: StrongPassword123!
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Backend API
+  backend:
+    build:
+      context: ./backend
+      dockerfile: dockerfile
+    container_name: student-app-backend
+    restart: unless-stopped
+    environment:
+      PORT: 5000
+      DB_HOST: mysql
+      DB_USER: myuser
+      DB_PASSWORD: StrongPassword123!
+      DB_NAME: student_portal
+      JWT_SECRET: your-secret-key-change-in-production
+    ports:
+      - "5000:5000"
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+  # Frontend
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: dockerfile
+    container_name: student-app-frontend
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend:/app
+    depends_on:
+      - backend
+
+volumes:
+  mysql_data:

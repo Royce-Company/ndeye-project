@@ -1,0 +1,72 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test-backend:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+
+    - name: Install backend dependencies
+      run: |
+        cd Student-portal-app/backend
+        npm install
+
+  test-frontend:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+
+    - name: Install linting tools
+      run: |
+        npm install -g htmlhint eslint
+
+    - name: Lint HTML files
+      run: |
+        cd Student-portal-app/frontend
+        htmlhint *.html
+
+    - name: Lint JavaScript files
+      run: |
+        cd Student-portal-app/frontend/js
+        eslint *.js
+
+  build-docker:
+    runs-on: ubuntu-latest
+    needs: [test-backend, test-frontend]
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Build Docker images
+      run: |
+        cd Student-portal-app
+        docker-compose build
+
+    - name: Run Docker Compose
+      run: |
+        cd Student-portal-app
+        docker-compose up -d
+        sleep 10
+
+    - name: Test frontend URL
+      run: |
+        cd Student-portal-app
+        curl -f http://localhost:3000 || exit 1

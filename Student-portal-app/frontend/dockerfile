@@ -1,0 +1,17 @@
+# Use Node.js base image for live-server
+FROM node:20-alpine
+
+# Set working directory
+WORKDIR /app
+
+# Install live-server globally
+RUN npm install -g live-server
+
+# Copy all frontend files
+COPY . .
+
+# Expose port 3000
+EXPOSE 3000
+
+# Start live-server
+CMD ["npx", "live-server", "--port=3000"]
